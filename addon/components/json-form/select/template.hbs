@@ -1,0 +1,23 @@
+<label for="{{field.name}}" class="control-label">{{field.label}}</label>
+{{#if field.options}}
+  {{#power-select
+    selected=selected
+    searchEnabled=searchEnabled
+    options=field.options
+    onchange=(action "onSelected")
+      as |name|
+  }}
+    {{name}}
+  {{/power-select}}
+{{/if}}
+
+{{#if field.url}}
+  {{#power-select
+    selected=selected
+    search=(action 'searchUrl')
+    onchange=(action "onSelected")
+    as |name|
+  }}
+    {{name}}
+  {{/power-select}}
+{{/if}}

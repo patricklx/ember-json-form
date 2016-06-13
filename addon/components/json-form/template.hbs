@@ -1,0 +1,11 @@
+<form class="{{if type 'form-'type}}">
+  <fieldset>
+    <legend>{{legend}}</legend>
+  {{#each form.fields as |field|}}
+    {{json-form/field field=field form=form}}
+  {{/each}}
+  </fieldset>
+  {{#if hasButton}}
+      <button class="btn btn-default" {{action 'onSend'}}>{{buttonLabel}}</button>
+  {{/if}}
+</form>

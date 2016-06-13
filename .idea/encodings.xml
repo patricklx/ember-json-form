@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/checkbox/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/component.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/field/component.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/field/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/form-group/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/input-group/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/select/component.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/select/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/addon/components/json-form/template.hbs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
