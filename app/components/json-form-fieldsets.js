@@ -1,2 +1,2 @@
-import component from 'ember-json-bsform/components/json-form-fieldsets/component';
+import component from 'ember-json-form/components/json-form-fieldsets/component';
 export default component;

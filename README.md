@@ -1,4 +1,4 @@
-# Ember-json-bsform
+# Ember-json-form
 
 This README outlines the details of collaborating on this Ember addon.
 
