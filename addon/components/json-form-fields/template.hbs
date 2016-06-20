@@ -1,0 +1,8 @@
+{{#each-in fieldset.fields as |fieldname field|}}
+  {{#json-form-validate-if form=form object=field}}
+    {{yield (hash
+      self=field
+      field=(component fieldComponent name=fieldname field=field fieldsetName=fieldsetName form=form onChange=(action onChange)))
+    }}
+  {{/json-form-validate-if}}
+{{/each-in}}

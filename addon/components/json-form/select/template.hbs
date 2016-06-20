@@ -1,23 +1,35 @@
-<label for="{{field.name}}" class="control-label">{{field.label}}</label>
-{{#if field.options}}
+{{#if field.multiple}}
+  {{#power-select-multiple
+  selected=selected
+  triggerClass=selectClassNames
+  searchEnabled=searchEnabled
+  options=field.options
+  renderInPlace=true
+  searchField='label'
+  onfocus=(action 'handleFocus')
+  onclose=(action 'onclose')
+  search=(action 'searchUrl')
+  onchange=(action 'onSelected')
+  as |item|
+  }}
+    {{if item.label item.label item}}
+  {{/power-select-multiple}}
+
+{{else}}
+
   {{#power-select
     selected=selected
     searchEnabled=searchEnabled
     options=field.options
-    onchange=(action "onSelected")
-      as |name|
-  }}
-    {{name}}
-  {{/power-select}}
-{{/if}}
-
-{{#if field.url}}
-  {{#power-select
-    selected=selected
+    triggerClass=selectClassNames
+    renderInPlace=true
+    searchField='label'
+    onfocus=(action 'handleFocus')
+    onclose=(action 'onclose')
     search=(action 'searchUrl')
-    onchange=(action "onSelected")
-    as |name|
+    onchange=(action 'onSelected')
+      as |item|
   }}
-    {{name}}
+    {{if item.label item.label item}}
   {{/power-select}}
 {{/if}}
