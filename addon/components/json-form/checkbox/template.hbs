@@ -1,5 +1,11 @@
 <div class="checkbox">
   <label>
-    {{input type="checkbox" checked=field.value}} {{field.label}}
+    {{input type="checkbox" checked=value
+    key-up=(action onChange value=target.value)
+    focus-out=(action onChange value=target.value)
+    change=(action onChange value=target.value)
+    mouse-up=(action onChange value=target.value)
+    on-input=(action onChange value=target.value)
+    }} {{field.label}}
   </label>
 </div>

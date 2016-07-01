@@ -1,5 +1,11 @@
 {{yield (hash
     validation=validation
     showMessage=showMessage
-    component=(component
-      fieldComponent name=name value=(get form formPath) isGroup=isGroup formPath=formPath form=form field=field onChange=(action 'onChange')))}}
+    component=(component fieldComponent
+      value=(readonly (get form.iniData formPath))
+      isGroup=isGroup
+      formPath=formPath
+      form=form
+      field=field
+      onChange=(action 'onChange')))
+}}

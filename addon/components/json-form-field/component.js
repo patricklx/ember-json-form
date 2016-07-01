@@ -3,12 +3,13 @@ import template from './template'
 
 export default Ember.Component.extend({
   layout: template,
-  normalTypes: ['text', 'number', 'email', 'textarea'],
+  normalTypes: ['text', 'number', 'email'],
 
   field: null,
-  name: null,
   fieldsetName: null,
   form: null,
+
+  name: Ember.computed.alias('field.id'),
 
   init() {
     var path;

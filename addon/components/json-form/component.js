@@ -10,6 +10,13 @@ var Form = Ember.Object.extend({
   fieldPaths: null,
   rootPath: null,
   __data: null,
+  form: null,
+
+  iniData: Ember.computed('form.iniData', function () {
+    return {
+      __data: this.get('form.iniData')
+    };
+  }),
 
   data: Ember.computed(function () {
     var data, serialized, path;
@@ -52,21 +59,22 @@ export default Ember.Component.extend({
   rootPath: '__data',
 
   form: Ember.computed('fieldsets' ,'fieldsets.[]', function () {
-    var validations, fieldsets, data, fieldPaths;
+    var validations, fieldsets, data, fieldPaths, form, iniData;
     validations = Ember.Object.create();
     fieldsets = this.get('fieldsets');
     if(!fieldsets) return null;
     validations = {};
     data = {};
     fieldPaths = [];
-    for (let setname of Object.keys(fieldsets)) {
-      var fieldset;
-      data[setname] = {};
-      fieldset = fieldsets[setname]
 
-      for (let fieldname of Object.keys(fieldset.fields)) {
-        var field, vName, part, i, nameParts;
-        field = fieldset.fields[fieldname];
+    fieldsets.forEach((fieldset) => {
+      var setname;
+      setname = fieldset.id;
+      data[setname] = {};
+
+      fieldset.fields.forEach((field) => {
+        var vName, part, i, nameParts, fieldname;
+        fieldname = field.id;
         part = data[setname];
 
         nameParts = fieldname.split('.');
@@ -89,25 +97,22 @@ export default Ember.Component.extend({
           let v = validator(valid, field.validations[valid]);
           validations[vName].validators.push(v);
         }
-      }
-    }
+      });
+    });
 
     let ValidationsMixin = buildValidations(validations, this.get('_globalOptions'));
 
+    iniData = this.get('iniData') || {};
+    Ember.$.extend(true, data, iniData);
     var MyForm = Form.extend(ValidationsMixin, {
       fieldsets: fieldsets,
       fieldPaths: fieldPaths,
       rootPath: this.rootPath,
+      form: this,
       __data: Ember.Object.create(data)
     });
-    data = this.get('iniData');
-    let form = MyForm.create(Ember.getOwner(this).ownerInjection(), {});
-    if (data) {
-      for (let key of Object.keys(data)) {
-        let value = data[key];
-        form.set(this.rootPath + '.'+key, value);
-      }
-    }
+
+    form = MyForm.create(Ember.getOwner(this).ownerInjection(), {});
     return form;
   }),
 

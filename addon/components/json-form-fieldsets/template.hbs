@@ -1,9 +1,8 @@
-{{#each-in form.fieldsets as |setname set|}}
+{{#each form.fieldsets as |set|}}
   {{#json-form-validate-if form=form object=set}}
     {{yield (hash
-      name=setname
       self=set
-      fields=(component fieldsComponent fieldsetName=setname form=form fieldset=set onChange=(action onChange))
+      fields=(component fieldsComponent fieldsetName=set.id form=form fieldset=set onChange=(action onChange))
       )}}
   {{/json-form-validate-if}}
-{{/each-in}}
+{{/each}}

@@ -1,9 +1,10 @@
 {{#if field.multiple}}
   {{#power-select-multiple
-  selected=selected
+  selected=(readonly selected)
   triggerClass=selectClassNames
   searchEnabled=searchEnabled
-  options=field.options
+  options=options
+  allowClear=allowClear
   renderInPlace=true
   searchField='label'
   onfocus=(action 'handleFocus')
@@ -18,9 +19,10 @@
 {{else}}
 
   {{#power-select
-    selected=selected
+    selected=(readonly selected)
     searchEnabled=searchEnabled
-    options=field.options
+    allowClear=allowClear
+    options=options
     triggerClass=selectClassNames
     renderInPlace=true
     searchField='label'
