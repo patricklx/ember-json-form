@@ -12,6 +12,15 @@ var Form = Ember.Object.extend({
   __data: null,
   form: null,
 
+  setIniData: Ember.observer('iniData', function () {
+    var path, iniData;
+    iniData = this.get('iniData');
+
+    for (path of this.fieldPaths) {
+      Ember.set(this, path, Ember.get(iniData, path));
+    }
+  }),
+
   iniData: Ember.computed('form.iniData', function () {
     return {
       __data: this.get('form.iniData')

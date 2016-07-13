@@ -86,16 +86,25 @@ export default Ember.Component.extend({
     }
     return this.get('ajax').request(url, {data:data}).then((json) => {
       var items = json.items;
+      items = Ember.A(json.items);
       if (this.get('hasIds') && this.get('selected')) {
-        this.get('selected').forEach((item) => {
-          var id = Ember.get(item, 'id');
-          items = Ember.A(json.items);
+        if( this.get('field.multiple') ) {
+          this.get('selected').forEach((item) => {
+            var id = Ember.get(item, 'id');
+            var obj = items.findBy('id', id);
+            if (obj) {
+              var i = items.indexOf(obj);
+              items[i] = item;
+            }
+          });
+        } else {
+          var id = Ember.get(this.get('selected'), 'id');
           var obj = items.findBy('id', id);
           if (obj) {
             var i = items.indexOf(obj);
-            items[i] = item;
+            items[i] = this.get('selected');
           }
-        });
+        }
       }
       if (resolve) {
         resolve(items);
@@ -152,7 +161,7 @@ export default Ember.Component.extend({
           this.set('isInitializing', false);
         });
       }
-      select.actions.open();
+      //select.actions.open();
     }
   }
 });

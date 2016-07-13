@@ -1,7 +1,2 @@
-import template from 'ember-json-form/components/json-form/textarea/template';
-import Ember from 'ember';
-
-export default Ember.Component.extend({
-  layout: template,
-  tagName: ''
-});
+import component from 'ember-json-form/components/json-form/textarea/component';
+export default component;
