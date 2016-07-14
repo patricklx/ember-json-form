@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import template from './template'
+import template from './template';
 
 export default Ember.Component.extend({
   layout: template,
@@ -145,12 +145,12 @@ export default Ember.Component.extend({
     searchUrl(term) {
       return new Ember.RSVP.Promise((resolve, reject) => {
         Ember.run.debounce(this, this.runSearch, term, resolve, reject, this.get('searchDelay'));
-      })
+      });
     },
 
     handleFocus(select, e) {
       if (this.get('field.initialize') && !this.get('isInitialized') && !this.get('isInitializing')) {
-        var p = this.runSearch('initialize')
+        var p = this.runSearch('initialize');
         this.set('options', p);
 
         this.set('isInitializing', true);

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import template from './template'
+import template from './template';
 
 export default Ember.Component.extend({
   layout: template,
@@ -15,7 +15,7 @@ export default Ember.Component.extend({
     var path;
     this._super();
     path = this.get('formPath');
-    Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path))
+    Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path));
   },
 
   formPath: Ember.computed('fieldsetName', 'name', function () {
@@ -28,7 +28,7 @@ export default Ember.Component.extend({
   }),
 
   isGroup: Ember.computed('field.addon.prefix', 'field.addon.suffix', function () {
-    return Boolean(this.get('field.addon.prefix') || this.get('field.addon.suffix'))
+    return Boolean(this.get('field.addon.prefix') || this.get('field.addon.suffix'));
   }),
 
   isNormalInput: Ember.computed('field.type', function () {
@@ -42,11 +42,24 @@ export default Ember.Component.extend({
     return 'json-form/' + this.get('field.type');
   }),
 
+  createPath(data, path) {
+    var parts;
+    parts = path.split('.').slice(0, -1);
+    parts.forEach(function (item) {
+      if (!Ember.get(data, item)) {
+        Ember.set(data, item, {});
+      }
+      data = Ember.get(data, item);
+    });
+  },
+
   setValue(value) {
     if (this.get('isDestroyed')) {
-      return
+      return;
     }
-    this.set('form.initData.'+this.get('formPath'), value);
+    this.createPath(this.get('form.iniData'), this.get('formPath'));
+
+    this.set('form.iniData.'+this.get('formPath'), value);
     this.set('form.'+this.get('formPath'), value);
     if (this.attrs.onChange) {
       this.attrs.onChange(value);
@@ -56,13 +69,13 @@ export default Ember.Component.extend({
   didInsertElement() {
     this._super();
     Ember.run.next(this, function () {
-      var validation, key;
+      var validation;
       validation = this.get('validation');
-      if (this.get('form.' + validation.attribute) == '') {
+      if (this.get('form.' + validation.attribute) === '') {
         this.set('form.' + validation.attribute, undefined);
       }
       this.set('form.' + validation.attribute + '__enabled', true);
-    })
+    });
   },
 
   willDestroyElement() {
@@ -71,7 +84,7 @@ export default Ember.Component.extend({
     var validation = this.get('validation');
     Ember.run.next(this, function () {
       form.set(validation.attribute + '__enabled', false);
-    })
+    });
   },
 
   actions: {
