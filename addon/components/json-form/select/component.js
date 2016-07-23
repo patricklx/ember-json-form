@@ -29,9 +29,9 @@ export default Ember.Component.extend({
 
 
   hasIds: Ember.computed('options.firstObject.id', 'selected.firstObject.id', 'selected.id', function() {
-    return this.get('options.firstObject.id') !== undefined
-      || this.get('selected.firstObject.id') !== undefined
-      || this.get('selected.id') !== undefined;
+    return this.get('options.firstObject.id') !== undefined ||
+      this.get('selected.firstObject.id') !== undefined ||
+      this.get('selected.id') !== undefined;
   }),
 
   searchEnabled: Ember.computed('field.search_enabled', function () {
@@ -52,6 +52,9 @@ export default Ember.Component.extend({
     }
     selected = value;
     options = this.get('field.options');
+    if (options.then) {
+      return selected;
+    }
     if( this.get('field.multiple') ){
       if (value && Ember.isArray(value)) {
         if (options) {
@@ -63,7 +66,6 @@ export default Ember.Component.extend({
         }
       }
     } else if (options) {
-      var findFn;
       if (this.get('hasIds')) {
         selected = options.findBy('id', Ember.get(value, 'id'));
       }
@@ -110,7 +112,7 @@ export default Ember.Component.extend({
         resolve(items);
       }
       return items;
-    })
+    });
   },
 
   actions: {

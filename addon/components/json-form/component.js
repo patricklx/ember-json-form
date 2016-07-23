@@ -71,7 +71,9 @@ export default Ember.Component.extend({
     var validations, fieldsets, data, fieldPaths, form, iniData;
     validations = Ember.Object.create();
     fieldsets = this.get('fieldsets');
-    if(!fieldsets) return null;
+    if(!fieldsets) {
+      return null;
+    }
     validations = {};
     data = {};
     fieldPaths = [];
@@ -82,13 +84,13 @@ export default Ember.Component.extend({
       data[setname] = {};
 
       fieldset.fields.forEach((field) => {
-        var vName, part, i, nameParts, fieldname;
+        var vName, part, nameParts, fieldname;
         fieldname = field.id;
         part = data[setname];
 
         nameParts = fieldname.split('.');
         for (let partName of nameParts) {
-          if (partName == nameParts[nameParts.length-1]) {
+          if (partName === nameParts[nameParts.length-1]) {
             continue;
           }
           part[partName] = part[partName] || {};
@@ -132,7 +134,7 @@ export default Ember.Component.extend({
           this.attrs.onSubmit(this.get('form.data'));
         }
         this.set('form.didValidate', true);
-      })
+      });
     },
 
     onChange(value) {

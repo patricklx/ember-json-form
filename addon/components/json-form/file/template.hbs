@@ -1,7 +1,10 @@
-{{input name=field.name classNames=classNames type=field.type value=value
+{{input name=field.name classNames=classNames type=field.type
   key-up=(action 'onChange')
   focus-out=(action 'onChange')
   change=(action 'onChange')
   mouse-up=(action 'onChange')
   input=(action 'onChange')
 }}
+<div>
+uploaded: {{stringValue}}
+</div>
