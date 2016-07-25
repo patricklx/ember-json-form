@@ -68,9 +68,12 @@ export default Ember.Component.extend({
 
   didInsertElement() {
     this._super();
+    var validation;
+    validation = this.get('validation');
+    if (!validation) {
+      return;
+    }
     Ember.run.next(this, function () {
-      var validation;
-      validation = this.get('validation');
       if (this.get('form.' + validation.attribute) === '') {
         this.set('form.' + validation.attribute, undefined);
       }
@@ -82,6 +85,9 @@ export default Ember.Component.extend({
     this._super();
     var form = this.get('form');
     var validation = this.get('validation');
+    if (!validation) {
+      return;
+    }
     Ember.run.next(this, function () {
       form.set(validation.attribute + '__enabled', false);
     });

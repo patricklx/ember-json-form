@@ -52,7 +52,7 @@ export default Ember.Component.extend({
     }
     selected = value;
     options = this.get('field.options');
-    if (options.then) {
+    if (!options || options.then) {
       return selected;
     }
     if( this.get('field.multiple') ){
@@ -74,17 +74,22 @@ export default Ember.Component.extend({
   },
 
   runSearch: function (term, resolve, reject) {
-    var data, params, key;
+    var data, params, key, url;
     if (Ember.isBlank(term)) { return []; }
-    const url = this.get('field.ask_server.url');
+    url = this.get('field.ask_server.url');
     data = {
       search: term
     };
     params = this.get('field.ask_server.params') || {};
     for(key of Object.keys(params)) {
-      var value;
+      let value;
       value = params[key];
       data[key] = this.get('form').get(value) || value;
+    }
+    url = url.replace('{term}', term);
+    params = this.get('field.ask_server.url_params') || {};
+    for(key of Object.keys(params)) {
+      url = url.replace(`{${key}}`, params[key]);
     }
     return this.get('ajax').request(url, {data:data}).then((json) => {
       var items = json.items;

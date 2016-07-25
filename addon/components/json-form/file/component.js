@@ -6,18 +6,8 @@ export default Ember.Component.extend({
   ajax: Ember.inject.service(),
   tagName: '',
 
-  stringValue: Ember.computed('value', function () {
-    if (this.get('value') === 'string') {
-      return this.get('value');
-    }
-    return null;
-  }),
-
   init() {
     this._super();
-    if (this.get('field.type') == 'file') {
-      this.set('form.'+this.get('formPath'), '');
-    }
   },
 
   actions: {
