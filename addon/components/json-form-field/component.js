@@ -3,6 +3,7 @@ import template from './template';
 
 export default Ember.Component.extend({
   layout: template,
+  tagName: '',
   normalTypes: ['text', 'number', 'email'],
 
   field: null,
@@ -62,7 +63,7 @@ export default Ember.Component.extend({
     this.set('form.iniData.'+this.get('formPath'), value);
     this.set('form.'+this.get('formPath'), value);
     if (this.attrs.onChange) {
-      this.attrs.onChange(value);
+      this.attrs.onChange(value, this.get('formPath').replace('__data', ''));
     }
   },
 

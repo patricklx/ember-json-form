@@ -6,7 +6,7 @@ export default Ember.Component.extend({
   tagName: '',
 
   _value: Ember.computed('value', function () {
-    return this.get('value');
+    return this.get('value') || false;
   }),
 
   actions: {

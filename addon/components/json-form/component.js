@@ -17,7 +17,9 @@ var Form = Ember.Object.extend({
     iniData = this.get('iniData');
 
     for (path of this.fieldPaths) {
-      Ember.set(this, path, Ember.get(iniData, path));
+      if (this.get(path.split('.').slice(0,-1).join('.'))) {
+        Ember.set(this, path, Ember.get(iniData, path));
+      }
     }
   }),
 
@@ -137,9 +139,9 @@ export default Ember.Component.extend({
       });
     },
 
-    onChange(value) {
+    onChange(value, attrPath) {
       if (this.attrs.onChange) {
-        this.attrs.onChange(value, this.get('form.data'));
+        this.attrs.onChange(this.get('form.data'), value, attrPath);
       }
     }
   }

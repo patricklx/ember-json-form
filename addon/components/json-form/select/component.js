@@ -94,6 +94,17 @@ export default Ember.Component.extend({
     return this.get('ajax').request(url, {data:data}).then((json) => {
       var items = json.items;
       items = Ember.A(json.items);
+      if (this.get('field.search_results_mapping')) {
+        let mapping = this.get('field.search_results_mapping');
+        items = items.map(function (item) {
+          let newItem = {};
+          for(let key of Object.keys(mapping)) {
+            let newKey = mapping[key];
+            newItem[newKey] = item[key];
+          }
+          return newItem;
+        });
+      }
       if (this.get('hasIds') && this.get('selected')) {
         if( this.get('field.multiple') ) {
           this.get('selected').forEach((item) => {

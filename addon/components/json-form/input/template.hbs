@@ -1,9 +1,11 @@
 {{input name=field.name type=field.type value=_value
-  key-up=(action onChange value=target.value)
-  focus-out=(action onChange value=target.value)
-  change=(action onChange value=target.value)
-  mouse-up=(action onChange value=target.value)
-  on-input=(action onChange value=target.value)
+  disabled=disabled
+  key-up=(action 'onChange' value=target.value)
+  focus-out=(action 'onChange' value=target.value)
+  change=(action 'onChange' value=target.value)
+  mouse-up=(action 'onChange' value=target.value)
+  on-input=(action 'onChange' value=target.value)
   classNames=classNames
+  placeholder=placeholder
   style=style
 }}
