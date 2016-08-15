@@ -60,10 +60,61 @@ export default Ember.Component.extend({
   globalOptions: {},
   fieldsetsComponent: 'json-form-fieldsets',
 
+  operators: {},
+  _operators: Ember.computed(function () {
+    var operators = this.get('operators');
+    operators['eq'] = function (a,b) {return a==b; };
+    operators['has'] = function (a,b) {return a && (a.contains(b) || a.isAny('id', b));};
+    operators['in'] = function (a,b) {return b.split(',').contains(String(a));};
+    operators['not'] = function(a, b) {return a != b;};
+    operators['has_not'] = function(a, b) {return a && (!a.contains(b) && !a.isAny('id', b));};
+    return operators;
+  }),
+
   _globalOptions: Ember.computed('globalOptions', function () {
     var opts = this.get('globalOptions');
+    var operators = this.get('_operators');
     opts.disabled = function disabled(model, attribute) {
-      return !model.get(attribute+'__enabled');
+      let findField = function (attr) {
+        let parts = attribute.split('.');
+        for(let i=0,l=model.fieldsets.length; i < l; i++) {
+          let fs = model.fieldsets[i];
+          if (fs.id !== parts[1]) {
+            continue;
+          }
+          for(let j=0, l2=fs.fields.length; j < l2; j++) {
+            let f = fs.fields[j];
+            if (f.id !== parts[2]) {
+              continue;
+            }
+            return [fs, f];
+          }
+        }
+      };
+      let [fieldset, field] = findField();
+      let onlyIf = field['only_if'] || fieldset['only_if'];
+      if (!onlyIf) {
+        return false;
+      }
+      //get the paths for computed dependency
+      let args = [];
+      for (let path of Object.keys(onlyIf)) {
+        args.push('form.'+'__data'+'.'+path);
+      }
+
+      //define the computed function
+      let allPas = true;
+      for (let path of Object.keys(onlyIf)) {
+        let rule, operator, value, op;
+        rule = onlyIf[path];
+        [operator, value] = rule.split(':');
+
+        path = '__data'+'.'+path;
+        op = operators[operator];
+        allPas = allPas && op(Ember.get(model, path), value);
+      }
+      return !allPas;
+      //return !model.get(attribute+'__enabled');
     };
     return opts;
   }),
@@ -104,7 +155,20 @@ export default Ember.Component.extend({
 
         validations[vName] = Ember.get(field, 'validation_options') || {};
         validations[vName].validators = [];
-        validations[vName].dependentKeys = [this.rootPath + '.' + setname + '.' + fieldname + '__enabled'];
+        let paths = [];
+        if (fieldset['only_if']) {
+          for (let path of Object.keys(fieldset['only_if'])) {
+            paths.push(this.rootPath+'.'+path);
+          }
+        }
+
+        if (field['only_if']) {
+          for (let path of Object.keys(field['only_if'])) {
+            paths.push(this.rootPath+'.'+path);
+          }
+        }
+        validations[vName].dependentKeys = paths;
+        //validations[vName].dependentKeys = [this.rootPath + '.' + setname + '.' + fieldname + '__enabled'];
 
         for (let valid of Object.keys(field.validations || {})) {
           let v = validator(valid, field.validations[valid]);
