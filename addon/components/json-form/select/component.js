@@ -140,10 +140,10 @@ export default Ember.Component.extend({
       } else if (item) {
         value = Ember.get(item, 'id') || item;
       }
-      if (value === undefined) {
-        value = '';
+      if (!value || value.length == 0) {
+        item = undefined;
       }
-      if (this.attrs.onChange) this.attrs.onChange(item || '');
+      if (this.attrs.onChange) this.attrs.onChange(item);
     },
 
     onclose() {
@@ -154,10 +154,10 @@ export default Ember.Component.extend({
       } else if (item) {
         value = Ember.get(item, 'id') || item;
       }
-      if (value === undefined) {
-        value = '';
+      if (!value || value.length == 0) {
+        item = undefined;
       }
-      if (this.attrs.onChange) this.attrs.onChange(item || '');
+      if (this.attrs.onChange) this.attrs.onChange(item);
     },
 
     searchUrl(term) {

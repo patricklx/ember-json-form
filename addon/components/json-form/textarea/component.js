@@ -25,6 +25,9 @@ export default Ember.Component.extend({
   actions: {
 
     onChange(value) {
+      if (value == '') {
+        value = undefined;
+      }
       this.attrs.onChange(value);
       let eId = this.get('elementId');
       let e = Ember.$(`#${eId} textarea`);
