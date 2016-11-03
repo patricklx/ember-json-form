@@ -4,6 +4,9 @@ import template from './template';
 export default Ember.Component.extend({
   layout: template,
   tagName: '',
+  textAreaElementId: Ember.computed(function () {
+    return Ember.guidFor(this);
+  }),
 
   _value: Ember.computed('value', function () {
     return this.get('value');
