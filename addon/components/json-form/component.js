@@ -4,6 +4,26 @@ import {
 } from 'ember-cp-validations';
 import template from './template';
 
+Ember.TextField.reopen({
+  _elementValueDidChange() {
+    let r = this._super(...arguments);
+    if (this.attrs.changed) {
+      this.attrs.changed(this.element.value);
+    }
+    return r;
+  }
+});
+
+Ember.TextArea.reopen({
+  _elementValueDidChange() {
+    let r = this._super(...arguments);
+    if (this.attrs.changed) {
+      this.attrs.changed(this.element.value);
+    }
+    return r;
+  }
+});
+
 var Form = Ember.Object.extend({
   isFormInvalid: Ember.computed.not('validations.isValid'),
   fieldsets: null,

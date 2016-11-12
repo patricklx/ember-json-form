@@ -58,9 +58,9 @@ export default Ember.Component.extend({
     if (this.get('isDestroyed')) {
       return;
     }
-    this.createPath(this.get('form.iniData'), this.get('formPath'));
+    // this.createPath(this.get('form.iniData'), this.get('formPath'));
+    // this.set('form.iniData.'+this.get('formPath'), value);
 
-    this.set('form.iniData.'+this.get('formPath'), value);
     this.set('form.'+this.get('formPath'), value);
     if (this.attrs.onChange) {
       this.attrs.onChange(value, this.get('formPath').replace('__data', ''));

@@ -16,7 +16,7 @@ export default Ember.Component.extend({
     get(){},
     set(key, val){
       Ember.run.next(() => {
-        let eId = this.get('elementId');
+        let eId = this.get('textAreaElementId');
         let e = Ember.$(`#${eId} textarea`);
         e.css({'height':'auto', 'overflow-y': 'hidden'}).height(e[0].scrollHeight);
         e.css({'overflow-y': 'auto'});
@@ -32,7 +32,7 @@ export default Ember.Component.extend({
         value = undefined;
       }
       this.attrs.onChange(value);
-      let eId = this.get('elementId');
+      let eId = this.get('textAreaElementId');
       let e = Ember.$(`#${eId} textarea`);
       e.css({'height':'auto', 'overflow-y': 'hidden'}).height(e[0].scrollHeight);
       e.css({'overflow-y': 'auto'});

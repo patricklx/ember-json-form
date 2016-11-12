@@ -1,8 +1,7 @@
 <div id="{{textAreaElementId}}">
-{{textarea name=field.name value=_value
+{{textarea name=field.name value=value
 disabled=disabled
-key-down=(action 'onChange' value='target.value')
-focus-out=(action 'onChange')
+changed=(action 'onChange')
 classNames=classNames
 style=style
   placeholder=field.placeholder
