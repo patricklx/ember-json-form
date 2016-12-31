@@ -4,7 +4,7 @@ import {
 } from 'ember-cp-validations';
 import template from './template';
 
-Ember.TextField.reopen({
+Ember.TextSupport.reopen({
   _elementValueDidChange() {
     let r = this._super(...arguments);
     if (this.attrs.changed) {
@@ -14,75 +14,10 @@ Ember.TextField.reopen({
   }
 });
 
-Ember.TextArea.reopen({
-  _elementValueDidChange() {
-    let r = this._super(...arguments);
-    if (this.attrs.changed) {
-      this.attrs.changed(this.element.value);
-    }
-    return r;
-  }
-});
-
-var Form = Ember.Object.extend({
-  isFormInvalid: Ember.computed.not('validations.isValid'),
-  fieldsets: null,
-  fieldPaths: null,
-  rootPath: null,
-  __data: null,
-  form: null,
-
-  setIniData: Ember.observer('iniData', function () {
-    var path, iniData;
-    iniData = this.get('iniData');
-
-    for (path of this.fieldPaths) {
-      if (this.get(path.split('.').slice(0,-1).join('.'))) {
-        Ember.set(this, path, Ember.get(iniData, path));
-      }
-    }
-  }),
-
-  iniData: Ember.computed('form.iniData', function () {
-    return {
-      __data: this.get('form.iniData')
-    };
-  }),
-
-  data: Ember.computed(function () {
-    var data, serialized, path;
-    data = this.get(this.rootPath);
-    serialized = {};
-
-    for (path of this.fieldPaths) {
-      var part, pathObject;
-
-      //create the paths
-      pathObject = serialized;
-      for (part of path.split('.')) {
-        if (!pathObject[part]) {
-          pathObject[part] = {};
-        }
-        pathObject = pathObject[part];
-      }
-      //set the data
-      Ember.set(serialized, path, this.get(path));
-    }
-    return serialized[this.rootPath];
-  }).volatile()
-});
-
-export default Ember.Component.extend({
-  layout: template,
-
-  iniData: null,
-  fieldsets: [],
-  globalOptions: {},
-  fieldsetsComponent: 'json-form-fieldsets',
-
-  operators: {},
+let ValidationMixin = Ember.Mixin.create({
+  __operators: {},
   _operators: Ember.computed(function () {
-    var operators = this.get('operators');
+    var operators = this.get('__operators');
     operators['eq'] = function (a,b) {return a==b; };
     operators['has'] = function (a,b) {return a && (a.contains(b) || a.isAny('id', b));};
     operators['in'] = function (a,b) {return b.split(',').contains(String(a));};
@@ -91,11 +26,10 @@ export default Ember.Component.extend({
     return operators;
   }),
 
-  _globalOptions: Ember.computed('globalOptions', function () {
-    var opts = this.get('globalOptions');
+  _validator: Ember.computed('_operators', function () {
     var operators = this.get('_operators');
-    opts.disabled = function disabled(model, attribute) {
-      let findField = function (attr) {
+    return function(model, attribute)  {
+      let findField = function () {
         let parts = attribute.split('.');
         for(let i=0,l=model.fieldsets.length; i < l; i++) {
           let fs = model.fieldsets[i];
@@ -134,8 +68,83 @@ export default Ember.Component.extend({
         allPas = allPas && op(Ember.get(model, path), value);
       }
       return !allPas;
-      //return !model.get(attribute+'__enabled');
     };
+  })
+});
+
+var Form = Ember.Object.extend(ValidationMixin, {
+  isFormInvalid: Ember.computed.not('validations.isValid'),
+  fieldsets: null,
+  fieldPaths: null,
+  rootPath: null,
+  __data: null,
+  form: null,
+  tmpData: null,
+
+  init() {
+    this._super(...arguments);
+    this.set('tmpData', {});
+  },
+
+  setIniData: Ember.observer('iniData', function () {
+    var path, iniData;
+    iniData = this.get('iniData');
+    this.set('tmpData', {});
+
+    for (path of this.fieldPaths) {
+      if (this.get(path.split('.').slice(0,-1).join('.'))) {
+        Ember.set(this, path, Ember.get(iniData, path));
+      }
+    }
+  }),
+
+  iniData: Ember.computed('form.iniData', function () {
+    return {
+      __data: this.get('form.iniData')
+    };
+  }),
+
+  data: Ember.computed(function () {
+    var data, serialized, path, validator;
+    validator = this.get('_validator');
+    data = this.get(this.rootPath);
+    serialized = {};
+
+    for (path of this.fieldPaths) {
+      var part, pathObject;
+
+      //create the paths
+      pathObject = serialized;
+      let parts = path.split('.');
+      for (part of parts) {
+        if (part === parts[parts.length-1]) {
+          break;
+        }
+        if (!pathObject[part]) {
+          pathObject[part] = {};
+        }
+        pathObject = pathObject[part];
+      }
+      //set the data
+      if (!validator(this, path)) {
+        Ember.set(serialized, path, this.get(path));
+      }
+    }
+    return serialized[this.rootPath];
+  }).volatile()
+});
+
+export default Ember.Component.extend(ValidationMixin, {
+  layout: template,
+
+  iniData: null,
+  fieldsets: [],
+  globalOptions: {},
+  fieldsetsComponent: 'json-form-fieldsets',
+
+  _globalOptions: Ember.computed('globalOptions', function () {
+    var opts = this.get('globalOptions');
+    opts.disabled = this.get('_validator');
     return opts;
   }),
   rootPath: '__data',

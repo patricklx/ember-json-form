@@ -18,8 +18,10 @@ export default Ember.Component.extend({
       Ember.run.next(() => {
         let eId = this.get('textAreaElementId');
         let e = Ember.$(`#${eId} textarea`);
-        e.css({'height':'auto', 'overflow-y': 'hidden'}).height(e[0].scrollHeight);
-        e.css({'overflow-y': 'auto'});
+        if (e[0]) {
+          e.css({'height':'auto', 'overflow-y': 'hidden'}).height(e[0].scrollHeight);
+          e.css({'overflow-y': 'auto'});
+        }
       });
       return val;
     }

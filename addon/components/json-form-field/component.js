@@ -8,7 +8,6 @@ export default Ember.Component.extend({
 
   field: null,
   fieldsetName: null,
-  form: null,
 
   name: Ember.computed.alias('field.id'),
 
@@ -18,6 +17,42 @@ export default Ember.Component.extend({
     path = this.get('formPath');
     Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path));
   },
+
+  tmpValue: Ember.computed('form.tmpData', {
+    get() {
+      let path = this.get('formPath');
+      path = path.replace(/\./g, '_');
+      return this.get('form.tmpData.' + path);
+    },
+    set(key, val) {
+      let path = this.get('formPath');
+      path = path.replace(/\./g, '_');
+      this.set('form.tmpData.' + path, val);
+      return val;
+    }
+  }),
+
+  form: Ember.computed({
+    set(key, val, cache) {
+      if (val !== cache && cache) {
+        this.set('tmpValue', undefined);
+      }
+      return val;
+    },
+    get() {
+      return null;
+    }
+  }),
+
+  iniData: Ember.computed('form.iniData', {
+    get() {
+      if (this.get('tmpValue') !== undefined) {
+        return this.get('tmpValue');
+      }
+      return this.get('form.iniData.' + this.get('formPath'));
+    },
+    set(key, val) {}
+  }),
 
   formPath: Ember.computed('fieldsetName', 'name', function () {
     return [this.get('form.rootPath'),this.get('fieldsetName'),this.get('name')].join('.');
@@ -89,6 +124,7 @@ export default Ember.Component.extend({
     if (!validation) {
       return;
     }
+    this.set('tmpValue', this.get('form.'+this.get('formPath')));
     Ember.run.next(this, function () {
       form.set(validation.attribute + '__enabled', false);
     });

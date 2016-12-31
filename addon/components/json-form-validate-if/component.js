@@ -58,6 +58,6 @@ export default Ember.Component.extend({
       }
       return allPas;
     });
-    Ember.defineProperty(this, 'ifIsTrue', Ember.computed.apply(null, args))
+    Ember.defineProperty(this, 'ifIsTrue', Ember.computed.apply(null, args));
   }
 });
