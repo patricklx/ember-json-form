@@ -29,7 +29,9 @@ let ValidationMixin = Ember.Mixin.create({
   _validator: Ember.computed('_operators', function () {
     var operators = this.get('_operators');
     return function(model, attribute)  {
-      let findField = function () {
+      let findFields = function () {
+        let foundFields = [];
+
         let parts = attribute.split('.');
         for(let i=0,l=model.fieldsets.length; i < l; i++) {
           let fs = model.fieldsets[i];
@@ -41,33 +43,40 @@ let ValidationMixin = Ember.Mixin.create({
             if (f.id !== parts[2]) {
               continue;
             }
-            return [fs, f];
+            foundFields.push([fs, f]);
           }
         }
+        return foundFields;
       };
-      let [fieldset, field] = findField();
-      let onlyIf = field['only_if'] || fieldset['only_if'];
-      if (!onlyIf) {
-        return false;
-      }
-      //get the paths for computed dependency
-      let args = [];
-      for (let path of Object.keys(onlyIf)) {
-        args.push('form.'+'__data'+'.'+path);
-      }
+      let fields = findFields();
+      for (let i=0; i<fields.length; i++) {
+        let [fieldset, field] = fields[i];
+        let onlyIf = field['only_if'] || fieldset['only_if'];
+        if (!onlyIf) {
+          return false;
+        }
+        //get the paths for computed dependency
+        let args = [];
+        for (let path of Object.keys(onlyIf)) {
+          args.push('form.'+'__data'+'.'+path);
+        }
 
-      //define the computed function
-      let allPas = true;
-      for (let path of Object.keys(onlyIf)) {
-        let rule, operator, value, op;
-        rule = onlyIf[path];
-        [operator, value] = rule.split(':');
+        //define the computed function
+        let allPas = true;
+        for (let path of Object.keys(onlyIf)) {
+          let rule, operator, value, op;
+          rule = onlyIf[path];
+          [operator, value] = rule.split(':');
 
-        path = '__data'+'.'+path;
-        op = operators[operator];
-        allPas = allPas && op(Ember.get(model, path), value);
+          path = '__data'+'.'+path;
+          op = operators[operator];
+          allPas = allPas && op(Ember.get(model, path), value);
+        }
+        if (allPas) {
+          return !allPas;
+        }
       }
-      return !allPas;
+      return true;
     };
   })
 });

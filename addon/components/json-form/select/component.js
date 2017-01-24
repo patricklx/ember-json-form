@@ -10,13 +10,14 @@ export default Ember.Component.extend({
   isInitialized: false,
   isInitializing: false,
   options: Ember.computed.alias('field.options'),
+  addPrefixText: 'Add... ',
 
   init() {
     this._super();
     this.updateIniSelected();
   },
 
-  updateIniSelected: Ember.observer('value', 'form.iniData', function () {
+  updateIniSelected: Ember.observer('value', 'options.[]', 'form.iniData', function () {
     this.set('selected', this.getSelectedOptionsById());
   }),
 
@@ -34,10 +35,12 @@ export default Ember.Component.extend({
       this.get('selected.id') !== undefined;
   }),
 
-  searchEnabled: Ember.computed('field.search_enabled', function () {
+  searchEnabled: Ember.computed('field.search_enabled', 'options.length', function () {
     var initialize = this.get('field.initialize');
     var hasUrl = this.get('field.ask_server.url');
-    if (!initialize && hasUrl) {
+    var optionslen = this.get('options.length');
+    var allow_add = this.get('field.allow_add');
+    if ((!initialize && hasUrl) || (optionslen > 6) || allow_add) {
       return true;
     } else {
       return false;
@@ -59,15 +62,15 @@ export default Ember.Component.extend({
       if (value && Ember.isArray(value)) {
         if (options) {
           if (this.get('hasIds')) {
-            selected = options.filter(function (item) {
-              return value.isAny('id',(Ember.get(item, 'id')));
+            selected = value.map(function (item) {
+              return options.findBy('id', item.id) || item;
             });
           }
         }
       }
     } else if (options) {
       if (this.get('hasIds')) {
-        selected = options.findBy('id', Ember.get(value, 'id'));
+        selected = options.findBy('id', Ember.get(value, 'id')) || selected;
       }
     }
     return selected;
@@ -92,8 +95,10 @@ export default Ember.Component.extend({
       url = url.replace(`{${key}}`, params[key]);
     }
     return this.get('ajax').request(url, {data:data}).then((json) => {
-      var items = json.items;
-      items = Ember.A(json.items);
+      let options = this.get('options') || [];
+      var items = [];
+      Array.prototype.push.apply(items, options);
+      Array.prototype.push.apply(items, Ember.A(json.items));
       if (this.get('field.search_results_mapping')) {
         let mapping = this.get('field.search_results_mapping');
         items = items.map(function (item) {
@@ -161,6 +166,17 @@ export default Ember.Component.extend({
     },
 
     searchUrl(term) {
+      term = String(term).toLowerCase();
+      let url = this.get('field.ask_server.url');
+      if (!url || this.get('field.initialize')) {
+        let options = this.get('options');
+        return options.filter(function(item) {
+          if (item.label) {
+            return String(item.label).toLowerCase().indexOf(term) !== -1;
+          }
+          return String(item).toLowerCase().indexOf(term) !== -1;
+        });
+      }
       return new Ember.RSVP.Promise((resolve, reject) => {
         Ember.run.debounce(this, this.runSearch, term, resolve, reject, this.get('searchDelay'));
       });
@@ -169,10 +185,10 @@ export default Ember.Component.extend({
     handleFocus(select, e) {
       if (this.get('field.initialize') && !this.get('isInitialized') && !this.get('isInitializing')) {
         var p = this.runSearch('initialize');
-        this.set('options', p);
 
         this.set('isInitializing', true);
-        p.then(() => {
+        p.then((result) => {
+          this.set('options', result);
           this.set('isInitialized', true);
         });
         p.finally(() => {
@@ -180,6 +196,20 @@ export default Ember.Component.extend({
         });
       }
       //select.actions.open();
+    },
+
+    addOption(text) {
+      if (this.get('field.allow_add')) {
+        let options = this.get('options') || [];
+        let index = options.indexOf(this.get('oldSearchTerm'));
+        this.set('oldSearchTerm', text);
+        if (index !== 0) {
+          options.splice(0, 0, text);
+        } else {
+          options[0] = text;
+        }
+        this.set('options', options);
+      }
     }
   }
 });

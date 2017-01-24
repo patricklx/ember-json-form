@@ -1,7 +1,3 @@
-{{input name=field.name classNames=classNames type=field.type
-  key-up=(action 'onChange')
-  focus-out=(action 'onChange')
-  change=(action 'onChange')
-  mouse-up=(action 'onChange')
-  input=(action 'onChange')
-}}
+<input name={{field.name}} class={{classNames}} type='file'
+       onchange={{action 'onChange'}}
+>

@@ -14,8 +14,12 @@
   onclose=(action 'onclose')
   search=(action 'searchUrl')
   onchange=(action 'onSelected')
-  as |item|
+  oninput=(action 'addOption')
+  as |item select|
   }}
+    {{#if (and field.allow_add (eq select.results.firstObject item))}}
+      {{addPrefixText}}
+    {{/if}}
     {{if item.label item.label item}}
   {{/power-select-multiple}}
 
@@ -34,6 +38,7 @@
     onclose=(action 'onclose')
     search=(action 'searchUrl')
     onchange=(action 'onSelected')
+    oninput=(action 'addOption')
       as |item|
   }}
     {{if item.label item.label item}}
