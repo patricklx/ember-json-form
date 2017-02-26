@@ -11,10 +11,10 @@ export default Ember.Component.extend({
   _operators: Ember.computed(function () {
     var operators = this.get('operators');
     operators['eq'] = function (a,b) {return String(a)==b; };
-    operators['has'] = function (a,b) {return a && (a.contains(b) || a.isAny('id', b));};
-    operators['in'] = function (a,b) {return b.split(',').contains(String(a));};
+    operators['has'] = function (a,b) {return a && Ember.isArray(a) && (a.contains(b) || a.isAny('id', b));};
+    operators['in'] = function (a,b) {return b && b.split && b.split(',').contains(String(a));};
     operators['not'] = function(a, b) {return a != b;};
-    operators['has_not'] = function(a, b) {return a && (!a.contains(b) && !a.isAny('id', b));};
+    operators['has_not'] = function(a, b) {return a && Ember.isArray(a) && (!a.contains(b) && !a.isAny('id', b));};
     return operators;
   }),
 
