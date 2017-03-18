@@ -3,27 +3,18 @@ import {
   validator, buildValidations
 } from 'ember-cp-validations';
 import template from './template';
-
-Ember.TextSupport.reopen({
-  _elementValueDidChange() {
-    let r = this._super(...arguments);
-    if (this.attrs.changed) {
-      this.attrs.changed(this.element.value);
-    }
-    return r;
-  }
-});
+import getOperators from 'ember-json-form/utils/functions'
 
 let ValidationMixin = Ember.Mixin.create({
   __operators: {},
   _operators: Ember.computed(function () {
-    var operators = this.get('__operators');
-    ooperators['eq'] = function (a,b) {return String(a)==b; };
-    operators['has'] = function (a,b) {return a && Ember.isArray(a) && (a.contains(b) || a.isAny('id', b));};
-    operators['in'] = function (a,b) {return b && b.split && b.split(',').contains(String(a));};
-    operators['not'] = function(a, b) {return a != b;};
-    operators['has_not'] = function(a, b) {return a && Ember.isArray(a) && (!a.contains(b) && !a.isAny('id', b));};
-    return operators;
+    let operators = this.get('operators');
+    let defaultOps = getOperators();
+
+    for (let k in Object.keys(operators)) {
+      defaultOps[k] = operators[k];
+    }
+    return defaultOps;
   }),
 
   _validator: Ember.computed('_operators', function () {
@@ -160,7 +151,6 @@ export default Ember.Component.extend(ValidationMixin, {
 
   form: Ember.computed('fieldsets' ,'fieldsets.[]', function () {
     var validations, fieldsets, data, fieldPaths, form, iniData;
-    validations = Ember.Object.create();
     fieldsets = this.get('fieldsets');
     if(!fieldsets) {
       return null;
