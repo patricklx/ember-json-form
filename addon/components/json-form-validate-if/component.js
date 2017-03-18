@@ -9,7 +9,7 @@ export default Ember.Component.extend({
   operators: {},
 
   _operators: Ember.computed(function () {
-    var operators = this.get('operators');
+    let operators = this.get('operators');
     operators['eq'] = function (a,b) {return String(a)==b; };
     operators['has'] = function (a,b) {return a && Ember.isArray(a) && (a.contains(b) || a.isAny('id', b));};
     operators['in'] = function (a,b) {return b && b.split && b.split(',').contains(String(a));};
@@ -20,7 +20,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super();
-    var root, onlyIf, path, form, object, args;
+    let root, onlyIf, path, form, object, args;
     form = this.get('form');
     object = this.get('object');
 

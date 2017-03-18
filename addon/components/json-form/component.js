@@ -17,8 +17,8 @@ Ember.TextSupport.reopen({
 let ValidationMixin = Ember.Mixin.create({
   __operators: {},
   _operators: Ember.computed(function () {
-    var operators = this.get('__operators');
-    ooperators['eq'] = function (a,b) {return String(a)==b; };
+    let operators = this.get('__operators');
+    operators['eq'] = function (a,b) {return String(a)==b; };
     operators['has'] = function (a,b) {return a && Ember.isArray(a) && (a.contains(b) || a.isAny('id', b));};
     operators['in'] = function (a,b) {return b && b.split && b.split(',').contains(String(a));};
     operators['not'] = function(a, b) {return a != b;};
@@ -27,7 +27,7 @@ let ValidationMixin = Ember.Mixin.create({
   }),
 
   _validator: Ember.computed('_operators', function () {
-    var operators = this.get('_operators');
+    let operators = this.get('_operators');
     return function(model, attribute)  {
       let findFields = function () {
         let foundFields = [];
