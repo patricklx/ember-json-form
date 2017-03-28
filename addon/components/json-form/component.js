@@ -3,10 +3,10 @@ import {
   validator, buildValidations
 } from 'ember-cp-validations';
 import template from './template';
-import getOperators from 'ember-json-form/utils/functions'
+import {getOperators} from 'ember-json-form/utils/functions';
 
 let ValidationMixin = Ember.Mixin.create({
-  __operators: {},
+  operators: {},
   _operators: Ember.computed(function () {
     let operators = this.get('operators');
     let defaultOps = getOperators();
@@ -18,7 +18,7 @@ let ValidationMixin = Ember.Mixin.create({
   }),
 
   _validator: Ember.computed('_operators', function () {
-    var operators = this.get('_operators');
+    let operators = this.get('_operators');
     return function(model, attribute)  {
       let findFields = function () {
         let foundFields = [];

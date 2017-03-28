@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-var initialize = function(application) {
+let initialize = function(application) {
   Ember.TextSupport.reopen({
     _elementValueDidChange() {
       let r = this._super(...arguments);
@@ -13,7 +13,7 @@ var initialize = function(application) {
 
 };
 
-var SetupAllInitializer = {
+let SetupAllInitializer = {
   name: 'ember-json-form-setup',
   initialize: initialize
 };

@@ -30,7 +30,7 @@ export default Ember.Component.extend({
   actions: {
 
     onChange(value) {
-      if (value == '') {
+      if (value === '') {
         value = undefined;
       }
       this.attrs.onChange(value);

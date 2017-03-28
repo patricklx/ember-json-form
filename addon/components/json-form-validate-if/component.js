@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import template from './template';
-import getOperators from 'ember-json-form/utils/functions'
+import {getOperators} from 'ember-json-form/utils/functions';
 
 export default Ember.Component.extend({
   layout: template,
@@ -21,7 +21,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super();
-    var root, onlyIf, path, form, object, args;
+    let root, onlyIf, path, form, object, args;
     form = this.get('form');
     object = this.get('object');
 
@@ -40,16 +40,18 @@ export default Ember.Component.extend({
 
     //define the computed function
     args.push(function () {
-      var root, onlyIf, path, form, object, allPas;
+      let root, onlyIf, path, form, object, allPas;
       form = this.get('form');
       object = this.get('object');
       root = form.rootPath;
       onlyIf = Ember.get(object, 'only_if');
-      if (!onlyIf) return true;
+      if (!onlyIf) {
+        return true;
+      }
 
       allPas = true;
       for (path of Object.keys(onlyIf)) {
-        var rule, operator, value, op;
+        let rule, operator, value, op;
         rule = onlyIf[path];
         [operator, value] = rule.split(':');
 
