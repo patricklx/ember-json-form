@@ -12,7 +12,7 @@ export default Ember.Component.extend({
   name: Ember.computed.alias('field.id'),
 
   init() {
-    var path;
+    let path;
     this._super();
     path = this.get('formPath');
     Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path));
@@ -51,7 +51,7 @@ export default Ember.Component.extend({
       }
       return this.get('form.iniData.' + this.get('formPath'));
     },
-    set(key, val) {}
+    set() {}
   }),
 
   formPath: Ember.computed('fieldsetName', 'name', function () {
@@ -79,7 +79,7 @@ export default Ember.Component.extend({
   }),
 
   createPath(data, path) {
-    var parts;
+    let parts;
     parts = path.split('.').slice(0, -1);
     parts.forEach(function (item) {
       if (!Ember.get(data, item)) {
@@ -104,7 +104,7 @@ export default Ember.Component.extend({
 
   didInsertElement() {
     this._super();
-    var validation;
+    let validation;
     validation = this.get('validation');
     if (!validation) {
       return;
@@ -119,8 +119,8 @@ export default Ember.Component.extend({
 
   willDestroyElement() {
     this._super();
-    var form = this.get('form');
-    var validation = this.get('validation');
+    let form = this.get('form');
+    let validation = this.get('validation');
     if (!validation) {
       return;
     }

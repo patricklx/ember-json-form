@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import template from './template';
+import {getOperators} from 'ember-json-form/utils/functions';
 
 export default Ember.Component.extend({
   layout: template,
@@ -10,12 +11,12 @@ export default Ember.Component.extend({
 
   _operators: Ember.computed(function () {
     let operators = this.get('operators');
-    operators['eq'] = function (a,b) {return String(a)==b; };
-    operators['has'] = function (a,b) {return a && Ember.isArray(a) && (a.contains(b) || a.isAny('id', b));};
-    operators['in'] = function (a,b) {return b && b.split && b.split(',').contains(String(a));};
-    operators['not'] = function(a, b) {return a != b;};
-    operators['has_not'] = function(a, b) {return a && Ember.isArray(a) && (!a.contains(b) && !a.isAny('id', b));};
-    return operators;
+    let defaultOps = getOperators();
+
+    for (let k in Object.keys(operators)) {
+      defaultOps[k] = operators[k];
+    }
+    return defaultOps;
   }),
 
   init() {
@@ -39,16 +40,18 @@ export default Ember.Component.extend({
 
     //define the computed function
     args.push(function () {
-      var root, onlyIf, path, form, object, allPas;
+      let root, onlyIf, path, form, object, allPas;
       form = this.get('form');
       object = this.get('object');
       root = form.rootPath;
       onlyIf = Ember.get(object, 'only_if');
-      if (!onlyIf) return true;
+      if (!onlyIf) {
+        return true;
+      }
 
       allPas = true;
       for (path of Object.keys(onlyIf)) {
-        var rule, operator, value, op;
+        let rule, operator, value, op;
         rule = onlyIf[path];
         [operator, value] = rule.split(':');
 
