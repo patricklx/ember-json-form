@@ -211,7 +211,7 @@ test('field should hide', function (assert) {
 
   wait().then(() => {
     assert.equal(this.$('.field-mynumberfied').length, 1, 'field not exists');
-    assert.equal(this.$('.field-mytextfied').val(), 1, 'val should be 1');
+    assert.equal(this.$('.field-mynumberfied').val(), '1', 'val should be 1');
     assert.equal(this.$('.field-mytextfied').length, 0, 'field should not exist');
   });
   
@@ -221,7 +221,7 @@ test('field should hide', function (assert) {
   });
 
   return wait().then(() => {
-    assert.equal(this.$('.field-mynumberfied').val(), 5, 'val should be 5');
+    assert.equal(this.$('.field-mynumberfied').val(), '5', 'val should be 5');
     assert.equal(this.$('.field-mytextfied').length, 1, 'field should exist');
   });
 });
