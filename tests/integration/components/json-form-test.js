@@ -14,7 +14,6 @@ moduleForComponent('json-form', 'Integration | Component | json form', {
 
     this.set('globalOptions', {
       allowBlank() {
-        console.log('options.presence', this.get('options.presence'));
         return !this.get('options.presence');
       },
       allowString() {
@@ -211,6 +210,7 @@ test('field should hide', function (assert) {
   this.$('#field-mynumberfied').change();
 
   wait().then(() => {
+    assert.equal(this.$('#field-mytextfied').val(), 1, 'val should be 1');
     assert.equal(this.$('#field-mytextfied').length, 0, 'field should not exist');
   });
   
