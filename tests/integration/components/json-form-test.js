@@ -213,11 +213,13 @@ test('field should hide', function (assert) {
   wait().then(() => {
     assert.equal(this.$('#field-mytextfied').length, 0, 'field should not exist');
   });
-
-  this.$('#field-mynumberfied').val(5);
-  this.$('#field-mynumberfied').change();
+  
+  wait().then(() => {
+    this.$('#field-mynumberfied').val(5);
+    this.$('#field-mynumberfied').change();
+  });
 
   return wait().then(() => {
-    assert.equal(this.$('#field-mytextfied').length, 0, 'field should not exist');
+    assert.equal(this.$('#field-mytextfied').length, 1, 'field should not exist');
   });
 });
