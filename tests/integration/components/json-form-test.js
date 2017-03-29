@@ -206,21 +206,21 @@ test('field should hide', function (assert) {
 
   this.render(template);
 
-  this.$('#field-mynumberfied').val(1);
-  this.$('#field-mynumberfied').change();
+  this.$('.field-mynumberfied').val(1);
+  this.$('.field-mynumberfied').change();
 
   wait().then(() => {
-    assert.equal(this.$('#field-mytextfied').val(), 1, 'val should be 1');
-    assert.equal(this.$('#field-mytextfied').length, 0, 'field should not exist');
+    assert.equal(this.$('.field-mytextfied').val(), 1, 'val should be 1');
+    assert.equal(this.$('.field-mytextfied').length, 0, 'field should not exist');
   });
   
   wait().then(() => {
-    this.$('#field-mynumberfied').val(5);
-    this.$('#field-mynumberfied').change();
+    this.$('.field-mynumberfied').val(5);
+    this.$('.field-mynumberfied').change();
   });
 
   return wait().then(() => {
-    assert.equal(this.$('#field-mynumberfied').val(), 5, 'val should be 5');
-    assert.equal(this.$('#field-mytextfied').length, 1, 'field should exist');
+    assert.equal(this.$('.field-mynumberfied').val(), 5, 'val should be 5');
+    assert.equal(this.$('.field-mytextfied').length, 1, 'field should exist');
   });
 });
