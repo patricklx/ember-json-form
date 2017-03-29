@@ -183,7 +183,7 @@ test('field with 2 validations and multiple configs', function (assert) {
 
 test('field should hide', function (assert) {
 
-  assert.expect(3);
+  assert.expect(4);
 
   this.set('fieldsets', [{
     id: 'fieldset1',
@@ -210,6 +210,7 @@ test('field should hide', function (assert) {
   this.$('.field-mynumberfied').change();
 
   wait().then(() => {
+    assert.equal(this.$('.field-mynumberfied').length, 1, 'field not exists');
     assert.equal(this.$('.field-mytextfied').val(), 1, 'val should be 1');
     assert.equal(this.$('.field-mytextfied').length, 0, 'field should not exist');
   });
