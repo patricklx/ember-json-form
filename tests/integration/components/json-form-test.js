@@ -61,7 +61,7 @@ const template = hbs`
             <label for='{{field.self.name}}'>{{field.self.label}}</label>
           {{/if}}
 
-          {{input.component classNames='form-control' id=(concat 'field-' field.self.id) errors=input.validation.messages}}
+          {{input.component classNames=(concat 'form-control ' 'field-' field.self.id) errors=input.validation.messages}}
 
           {{#if input.validation.isValidating}}
             <p class='text-info'>validating...</p>
