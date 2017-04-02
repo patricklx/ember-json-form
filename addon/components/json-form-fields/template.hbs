@@ -1,8 +1,20 @@
 {{#each fieldset.fields as |field|}}
-  {{#json-form-validate-if form=form object=field}}
+
+  {{#if field.only_if}}
+
+    {{#json-form-validate-if form=form object=field}}
+      {{yield (hash
+        self=field
+        input=(component fieldComponent field=field fieldsetName=fieldsetName form=form onChange=(action onChange)))
+      }}
+    {{/json-form-validate-if}}
+
+  {{else}}
+
     {{yield (hash
-      self=field
-      input=(component fieldComponent field=field fieldsetName=fieldsetName form=form onChange=(action onChange)))
+              self=field
+              input=(component fieldComponent field=field fieldsetName=fieldsetName form=form onChange=(action onChange)))
     }}
-  {{/json-form-validate-if}}
+
+  {{/if}}
 {{/each}}
