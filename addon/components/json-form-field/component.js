@@ -16,6 +16,7 @@ export default Ember.Component.extend({
     this._super();
     path = this.get('formPath');
     Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path));
+    Ember.defineProperty(this, "hasContent", Ember.computed.bool('form.'+this.get('formPath')));
   },
 
   tmpValue: Ember.computed('form.tmpData', {
@@ -58,9 +59,8 @@ export default Ember.Component.extend({
     return [this.get('form.rootPath'),this.get('fieldsetName'),this.get('name')].join('.');
   }),
 
-  showMessage: Ember.computed('form.didValidate', 'validation.isInvalid', 'validation.isDirty', function(){
-    return this.get('form.didValidate') ||
-      (this.get('validation.isInvalid') && this.get('validation.isDirty'));
+  showMessage: Ember.computed('hasContent', 'validation.isInvalid', function(){
+    return this.validation.isInvalid && this.hasContent;
   }),
 
   isGroup: Ember.computed('field.addon.prefix', 'field.addon.suffix', function () {

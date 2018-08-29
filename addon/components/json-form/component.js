@@ -20,6 +20,7 @@ let ValidationMixin = Ember.Mixin.create({
   _validator: Ember.computed('_operators', function () {
     let operators = this.get('_operators');
     return function(model, attribute)  {
+      if (!model) return;
       let findFields = function () {
         let foundFields = [];
 
@@ -144,7 +145,6 @@ export default Ember.Component.extend(ValidationMixin, {
 
   _globalOptions: Ember.computed('globalOptions', function () {
     var opts = this.get('globalOptions');
-    opts.disabled = this.get('_validator');
     return opts;
   }),
   rootPath: '__data',
@@ -198,7 +198,12 @@ export default Ember.Component.extend(ValidationMixin, {
         validations[vName].dependentKeys = paths;
         //validations[vName].dependentKeys = [this.rootPath + '.' + setname + '.' + fieldname + '__enabled'];
 
+        const func = this.get('_validator');
         for (let valid of Object.keys(field.validations || {})) {
+          if (typeof field.validations[valid] !== 'object') {
+            field.validations[valid] = {[valid]: field.validations[valid]};
+          }
+          field.validations[valid].disabled = Ember.computed(function() {return func(this.model, vName)}).volatile();
           let v = validator(valid, field.validations[valid]);
           validations[vName].validators.push(v);
         }

@@ -1,9 +1,12 @@
 <div id="{{textAreaElementId}}">
-{{textarea name=field.name value=value
-disabled=disabled
-changed=(action 'onChange')
-classNames=classNames
-style=style
-  placeholder=field.placeholder
-}}
+<textarea
+  name={{field.name}}
+  value={{value}}
+  disabled={{disabled}}
+  onchange={{action 'onChange' value="target.value"}}
+  class={{classNames}}
+  style={{style}}
+  placeholder={{field.placeholder}}
+  ...attributes
+/>
 </div>
