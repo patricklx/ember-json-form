@@ -3,7 +3,9 @@
     <input type="checkbox"
            disabled={{if disabled 'true' false}}
            checked={{_value}}
-           onclick={{action "onChange" value="target.checked"}} />
+           onclick={{action "onChange" value="target.checked"}}
+           ...attributes
+    />
     {{field.label}}
   </label>
 </div>

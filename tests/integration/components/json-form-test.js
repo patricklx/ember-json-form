@@ -1,16 +1,12 @@
-import {moduleForComponent, test} from 'ember-qunit';
+import {module, test} from 'qunit';
+import {setupRenderingTest} from 'ember-qunit';
+import {render, click, settled} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
-import startApp from '../../helpers/start-app';
 
-let application;
 
-moduleForComponent('json-form', 'Integration | Component | json form', {
-  integration: true,
-  beforeEach: function() {
-    Ember.run(function() {
-      application = startApp();
-    });
+module('json-form', function (hooks) {
+  setupRenderingTest(hooks);
+  hooks.beforeEach(function () {
 
     this.set('globalOptions', {
       allowBlank() {
@@ -21,38 +17,38 @@ moduleForComponent('json-form', 'Integration | Component | json form', {
       }
     });
 
-    this.on('onSubmit', function (data) {
+    this.set('onSubmit', (data) => {
       this.set('result', data);
     });
 
-    this.on('onChange', function () {
-
+    this.set('onChange', (data) => {
+      this.set('tmpData', data);
     });
 
     this.set('toggleProperty', Ember.Object.prototype.toggleProperty);
-  }
-});
+  });
 
-const template = hbs`
+
+  const template = hbs`
   {{#json-form
     globalOptions=globalOptions
-    onSubmit=(action 'onSubmit')
-    onChange=(action 'onChange')
+    onSubmit=(action onSubmit)
+    onChange=(action onChange)
     fieldsets=fieldsets
-  as |form|
+  as |Form|
 }}
   <form class='form'>
-  {{#form.fieldsets as |fieldset|}}
+  {{#Form.fieldsets as |Fieldset|}}
     <fieldset>
-      {{#if fieldset.self.legend}}
+      {{#if Fieldset.self.legend}}
         <legend>
-          {{fieldset.self.legend}}
+          {{Fieldset.self.legend}}
           <br>
-          <small>{{fieldset.self.sub-legend}}</small>
+          <small>{{Fieldset.self.sub-legend}}</small>
         </legend>
       {{/if}}
 
-    {{#fieldset.fields as |field|}}
+    {{#Fieldset.fields as |field|}}
       {{#field.input as |input|}}
 
         <div class='form-group'>
@@ -81,147 +77,155 @@ const template = hbs`
 
         </div>
       {{/field.input}}
-    {{/fieldset.fields}}
+    {{/Fieldset.fields}}
     </fieldset>
-  {{/form.fieldsets}}
+  {{/Form.fieldsets}}
   
-  <div id='form-didValidate'>{{if form.self.validations.didValidate 'true' 'false'}}</div>
+  <div id='form-didValidate'>{{if Form.self.validations.didValidate 'true' 'false'}}</div>
     
     {{#each form.self.validations.errors as |error|}}
       <div class='alert alert-danger'>
-        <strong>{{error.attribute}} {{form.self.fieldsets}}:</strong> {{error.message}}</div>
+        <strong>{{error.attribute}} {{Form.self.fieldsets}}:</strong> {{error.message}}</div>
     {{/each}}
     
-    {{#if form.self.validations.isInvalid}}     
+    {{#if Form.self.validations.isInvalid}}     
       <button class='first-button' onclick={{action toggleProperty 'checkValidations'}}>
       Toggle show validations
       </button>        
     {{else}}
-        <button onclick={{action form.onSubmit}}>Save</button>
+        <button onclick={{action Form.onSubmit}}>Save</button>
     {{/if}}
   </form>
 {{/json-form}}
   `;
 
-test('field with one validations', function (assert) {
+  test('field with one validations', async function (assert) {
 
-  assert.expect(5);
+    assert.expect(7);
 
-  this.set('fieldsets', [{
-    id: 'fieldset1',
-    fields: [{
-      id: 'mytextfied',
-      label: 'mytextfied',
-      type: 'number',
-      validations: {
-        presence: true
-      }
-    }]
-  }]);
+    this.set('fieldsets', [{
+      id: 'fieldset1',
+      fields: [{
+        id: 'mytextfied',
+        label: 'mytextfied',
+        type: 'number',
+        validations: {
+          presence: true
+        }
+      }]
+    }]);
 
-  this.render(template);
+    await render(template);
 
-  this.$('.form-control').val('');
-  this.$('.form-control').change();
+    assert.equal(this.$('.text-danger').val(), undefined);
 
-  wait().then(() => {
+    this.$('.form-control').val('');
+    this.$('.form-control').change();
+    this.set('checkValidations', false);
+
+    await settled();
+
+    assert.ok(this.tmpData, 'should have tmpData');
+
     assert.equal(this.$('.text-danger').text(), '');
     assert.equal(this.$('.text-danger').length, 0, 'should not show an error');
-  });
 
-  return wait().then(() => {
     this.set('checkValidations', true);
+
+    await settled();
+
     assert.equal(this.$('.form-control').val(), '', 'input is not empty');
     assert.equal(this.$('.text-danger').text(), 'This field can\'t be blank');
     assert.equal(this.$('.text-danger').length, 1, 'should show an error');
     this.set('checkValidations', false);
   });
-});
 
 
-test('field with 2 validations and multiple configs', function (assert) {
+  test('field with 2 validations and multiple configs', async function (assert) {
 
-  assert.expect(4);
+    assert.expect(4);
 
-  this.set('fieldsets', [{
-    id: 'fieldset1',
-    fields: [{
-      id: 'mytextfied',
-      label: 'mytextfied',
-      type: 'text',
-      validations: {
-        presence: true,
-        length: {
-          min: 5,
-          max: 10
-        }
-      }
-    }]
-  }]);
-
-  this.render(template);
-
-  this.$('.form-control').val('a234');
-  this.$('.form-control').change();
-
-  wait().then(() => {
-    assert.equal(this.$('.text-danger').text(), 'This field is too short (minimum is 5 characters)');
-    assert.equal(this.$('.text-danger').length, 1, 'should show an error');
-  });
-
-  wait().then(() => {
-    this.$('.form-control').val('1234567891011');
-    this.$('.form-control').change();
-  });
-
-  return wait().then(() => {
-    assert.equal(this.$('.text-danger').text(), 'This field is too long (maximum is 10 characters)');
-    assert.equal(this.$('.text-danger').length, 1, 'should show an error');
-  });
-});
-
-
-test('field should hide', function (assert) {
-
-  assert.expect(5);
-
-  this.set('fieldsets', [{
-    id: 'fieldset1',
-    fields: [
-      {
-        id: 'mynumberfied',
-        label: 'mynumberfied',
-        type: 'number'
-      },
-      {
+    this.set('fieldsets', [{
+      id: 'fieldset1',
+      fields: [{
         id: 'mytextfied',
         label: 'mytextfied',
         type: 'text',
-        only_if: {
-          'fieldset1.mynumberfied': 'eq:5'
+        validations: {
+          presence: true,
+          length: {
+            min: 5,
+            max: 10
+          }
         }
-      }
-    ]
-  }]);
+      }]
+    }]);
 
-  this.render(template);
+    await render(template);
 
-  this.$('.field-mynumberfied').val(1);
-  this.$('.field-mynumberfied').change();
+    this.$('.form-control').val('a234');
+    this.$('.form-control').change();
 
-  wait().then(() => {
+    await settled();
+
+    assert.equal(this.$('.text-danger').text(), 'This field is too short (minimum is 5 characters)');
+    assert.equal(this.$('.text-danger').length, 1, 'should show an error');
+
+
+    await settled();
+    this.$('.form-control').val('1234567891011');
+    this.$('.form-control').change();
+
+
+    await settled();
+    assert.equal(this.$('.text-danger').text(), 'This field is too long (maximum is 10 characters)');
+    assert.equal(this.$('.text-danger').length, 1, 'should show an error');
+
+  });
+
+
+  test('field should hide', async function (assert) {
+
+    assert.expect(5);
+
+    this.set('fieldsets', [{
+      id: 'fieldset1',
+      fields: [
+        {
+          id: 'mynumberfied',
+          label: 'mynumberfied',
+          type: 'number'
+        },
+        {
+          id: 'mytextfied',
+          label: 'mytextfied',
+          type: 'text',
+          only_if: {
+            'fieldset1.mynumberfied': 'eq:5'
+          }
+        }
+      ]
+    }]);
+
+    await render(template);
+
+    this.$('.field-mynumberfied').val(1);
+    this.$('.field-mynumberfied').change();
+
+    await settled();
     assert.equal(this.$('.field-mynumberfied').length, 1, 'field not exists');
     assert.equal(this.$('.field-mynumberfied').val(), '1', 'val should be 1');
     assert.equal(this.$('.field-mytextfied').length, 0, 'field should not exist');
-  });
 
-  wait().then(() => {
+
+    await settled();
     this.$('.field-mynumberfied').val(5);
     this.$('.field-mynumberfied').change();
-  });
 
-  return wait().then(() => {
+
+    await settled();
     assert.equal(this.$('.field-mynumberfied').val(), '5', 'val should be 5');
     assert.equal(this.$('.field-mytextfied').length, 1, 'field should exist');
+
   });
 });

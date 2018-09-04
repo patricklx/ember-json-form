@@ -16,6 +16,12 @@ export default Ember.Component.extend({
     this._super();
     path = this.get('formPath');
     Ember.defineProperty(this, "validation", Ember.computed.oneWay("form.validations.attrs." + path));
+    Ember.defineProperty(this, "hasContent", Ember.computed(`form.${this.formPath}`, function () {
+      if (!this._hadContent) {
+        this._hadContent = this.get(`form.${this.formPath}`) !== undefined;
+      }
+      return this._hadContent;
+    }));
   },
 
   tmpValue: Ember.computed('form.tmpData', {
@@ -58,9 +64,8 @@ export default Ember.Component.extend({
     return [this.get('form.rootPath'),this.get('fieldsetName'),this.get('name')].join('.');
   }),
 
-  showMessage: Ember.computed('form.didValidate', 'validation.isInvalid', 'validation.isDirty', function(){
-    return this.get('form.didValidate') ||
-      (this.get('validation.isInvalid') && this.get('validation.isDirty'));
+  showMessage: Ember.computed('hasContent', 'validation.isInvalid', function(){
+    return this.validation.isInvalid && this.hasContent;
   }),
 
   isGroup: Ember.computed('field.addon.prefix', 'field.addon.suffix', function () {
@@ -97,8 +102,8 @@ export default Ember.Component.extend({
     // this.set('form.iniData.'+this.get('formPath'), value);
 
     this.set('form.'+this.get('formPath'), value);
-    if (this.attrs.onChange) {
-      this.attrs.onChange(value, this.get('formPath').replace('__data', ''));
+    if (this.onChange) {
+      this.onChange(value, this.get('formPath').replace('__data', ''));
     }
   },
 
@@ -135,7 +140,6 @@ export default Ember.Component.extend({
       if (value instanceof Ember.$.Event) {
         value = value.target.value;
       }
-
       //had some issues when I wanted to click somewhere the controls jumped to other positions
       //and the the click went nowhere, this fixes it
       Ember.run.debounce(this, this.setValue, value, 100);

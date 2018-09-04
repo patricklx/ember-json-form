@@ -33,7 +33,7 @@ export default Ember.Component.extend({
       if (value === '') {
         value = undefined;
       }
-      this.attrs.onChange(value);
+      this.onChange(value);
       let eId = this.get('textAreaElementId');
       let e = Ember.$(`#${eId} textarea`);
       e.css({'height':'auto', 'overflow-y': 'hidden'}).height(e[0].scrollHeight);
