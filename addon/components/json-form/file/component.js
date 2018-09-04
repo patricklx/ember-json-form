@@ -15,7 +15,7 @@ export default Ember.Component.extend({
       var file;
       if (value instanceof Event) {
         file = value ? value.target.files[0] : null;
-        this.attrs.onChange(file);
+        this.onChange(file);
       }
     }
   }

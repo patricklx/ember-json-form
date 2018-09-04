@@ -12,7 +12,7 @@ export default Ember.Component.extend({
   actions: {
 
     onChange(value) {
-      this.attrs.onChange(value);
+      this.onChange(value);
     }
   }
 });

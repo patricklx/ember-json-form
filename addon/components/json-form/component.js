@@ -230,15 +230,15 @@ export default Ember.Component.extend(ValidationMixin, {
     onSubmit() {
       this.get('form').validate().then((m) => {
         if (Ember.get(m,'validations.isValid')) {
-          this.attrs.onSubmit(this.get('form.data'));
+          this.onSubmit(this.get('form.data'));
         }
         this.set('form.didValidate', true);
       });
     },
 
     onChange(value, attrPath) {
-      if (this.attrs.onChange) {
-        this.attrs.onChange(this.get('form.data'), value, attrPath);
+      if (this.onChange) {
+        this.onChange(this.get('form.data'), value, attrPath);
       }
     }
   }

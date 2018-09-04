@@ -15,7 +15,7 @@ export default Ember.Component.extend({
       if (value === '') {
         value = undefined;
       }
-      this.attrs.onChange(value);
+      this.onChange(value);
     }
   }
 });
