@@ -203,7 +203,11 @@ export default Ember.Component.extend(ValidationMixin, {
           if (typeof field.validations[valid] !== 'object') {
             field.validations[valid] = {[valid]: field.validations[valid]};
           }
-          field.validations[valid].disabled = Ember.computed(function() {return func(this.model, vName)}).volatile();
+          Object.defineProperty(field.validations[valid], 'disabled', {
+            get() {
+              return func(this.model, vName);
+            }
+          });
           let v = validator(valid, field.validations[valid]);
           validations[vName].validators.push(v);
         }
