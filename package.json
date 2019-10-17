@@ -13,7 +13,7 @@
   },
   "repository": "",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 10"
   },
   "author": "",
   "license": "MIT",
@@ -35,7 +35,7 @@
     "ember-maybe-import-regenerator-for-testing": "^1.0.0",
     "ember-resolver": "^5.0.1",
     "ember-source": "^3.4.0",
-    "ember-try": "^0.2.23",
+    "ember-try": "^1.2.1",
     "loader.js": "^4.7.0"
   },
   "keywords": [
