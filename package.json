@@ -51,6 +51,9 @@
     "ember-cp-validations": "^4.0.0-beta.2"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config"
+    "configPath": "tests/dummy/config",
+    "versionCompatibility": {
+       "ember": ">2.0.0 <=3.13.3"
+    }
   }
 }
