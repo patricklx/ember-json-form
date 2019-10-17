@@ -1,7 +1,7 @@
 ---
 language: node_js
 node_js:
-  - "9"
+  - "10"
 
 sudo: false
 
@@ -32,7 +32,7 @@ install:
 script:
   # Usually, it's ok to finish the test scenario without reverting
   #  to the addon's original dependency state, skipping "cleanup".
-  - ember try $EMBER_TRY_SCENARIO test --skip-cleanup
+  - ember try:one $EMBER_TRY_SCENARIO test --skip-cleanup
 
 
 deploy:
