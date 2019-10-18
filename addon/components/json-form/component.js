@@ -204,6 +204,7 @@ export default Ember.Component.extend(ValidationMixin, {
             field.validations[valid] = {[valid]: field.validations[valid]};
           }
           Object.defineProperty(field.validations[valid], 'disabled', {
+            configurable: true,
             get() {
               return func(this.model, vName);
             }
